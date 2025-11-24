@@ -22,6 +22,7 @@ import java.util.Map;
  */
 public class CustomerModel {
     public CustomerView cusView;
+    public RemoveProductNotifier noStockWarning;
     public DatabaseRW databaseRW; //Interface type, not specific implementation
                                   //Benefits: Flexibility: Easily change the database implementation.
 
@@ -70,7 +71,33 @@ public class CustomerModel {
             //TODO
             // 1. Merges items with the same product ID (combining their quantities).
             // 2. Sorts the products in the trolley by product ID.
-            trolley.add(theProduct);
+
+            //step 1
+            // I start with checking if the product is actually in the trolley and matched
+            // using a flag variable
+            boolean IsProductAlreadyInTrolley = false;
+
+            for (int i=0; i<trolley.size(); i++){
+
+                Product productInTrolley = trolley.get(i);
+                //checks if productID in trolley is the same as the productID thats being looked for
+                if(productInTrolley.getProductId().equals(theProduct.getProductId())){
+                    int TheCurrentQuantity = productInTrolley.getOrderedQuantity();
+                    productInTrolley.setOrderedQuantity(TheCurrentQuantity + 1);
+                    //if product match is found then flag goes to true and loops stops next
+                    IsProductAlreadyInTrolley = true;
+                    break;
+
+                }
+            }
+            //after the loop if the flag is still false then adds item to trolley
+            if(IsProductAlreadyInTrolley == false){
+                trolley.add(theProduct);
+            }
+            //step 2
+            // I use a lambda expression to define a rule to compare the product and productID
+            //product in trolley is prd1 and productID is prd2
+            trolley.sort((prd1,prd2)->prd1.getProductId().compareTo(prd2.getProductId()));
             displayTaTrolley = ProductListFormatter.buildString(trolley); //build a String for trolley so that we can show it
         }
         else{
@@ -83,7 +110,7 @@ public class CustomerModel {
 
     void checkOut() throws IOException, SQLException {
         if(!trolley.isEmpty()){
-            // Group the products in the trolley by productId to optimize stock checking
+            // Group the all  products in the trolley including what's out of stock by productId to optimize stock checking
             // Check the database for sufficient stock for all products in the trolley.
             // If any products are insufficient, the update will be rolled back.
             // If all products are sufficient, the database will be updated, and insufficientProducts will be empty.
@@ -121,8 +148,10 @@ public class CustomerModel {
                 // 2. Trigger a message window to notify the customer about the insufficient stock, rather than directly changing displayLaSearchResult.
                 //You can use the provided RemoveProductNotifier class and its showRemovalMsg method for this purpose.
                 //remember close the message window where appropriate (using method closeNotifierWindow() of RemoveProductNotifier class)
-                displayLaSearchResult = "Checkout failed due to insufficient stock for the following products:\n" + errorMsg.toString();
-                System.out.println("stock is not enough");
+
+                trolley.removeAll(insufficientProducts);//this is step 1 that  removes all the insufficient stock from the trolley
+                noStockWarning.showRemovalMsg(errorMsg.toString());
+
             }
         }
         else{
@@ -155,6 +184,7 @@ public class CustomerModel {
     void cancel(){
         trolley.clear();
         displayTaTrolley="";
+        noStockWarning.closeNotifierWindow();
         updateView();
     }
     void closeReceipt(){
