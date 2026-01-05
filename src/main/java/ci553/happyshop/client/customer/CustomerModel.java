@@ -1,4 +1,10 @@
+
 package ci553.happyshop.client.customer;
+
+import ci553.happyshop.catalogue.validation.OrderChecker;
+import ci553.happyshop.catalogue.validation.MaximumQuantRule;
+import ci553.happyshop.catalogue.validation.MinimumSpendingRule;
+import java.util.List;
 
 import ci553.happyshop.catalogue.Order;
 import ci553.happyshop.catalogue.Product;
@@ -28,6 +34,21 @@ public class CustomerModel {
 
     private Product theProduct =null; // product found from search
     private ArrayList<Product> trolley =  new ArrayList<>(); // a list of products in trolley
+
+    //<------------------------------------------------------------------------------>
+    //Code in this block is to load rules for the OCP for the complex payment feature
+
+    private List<OrderChecker> activeRules = new ArrayList<>();
+    // this line of code lists the OCP rules
+
+
+    public CustomerModel(){
+        activeRules.add(new MinimumSpendingRule());
+        activeRules.add(new MaximumQuantRule());
+    }
+    //code above here is to load the OCP rules via constructors
+
+    //<----------------------------------------------------------------------------------->
 
     // Four UI elements to be passed to CustomerView for display updates.
     private String imageName = "imageHolder.jpg";                // Image to show in product preview (Search Page)
@@ -110,6 +131,12 @@ public class CustomerModel {
 
     void checkOut() throws IOException, SQLException {
         if(!trolley.isEmpty()){
+            //<------------------------------------------------------------------------------------------------->
+            //Try Catch for validation block and if this fails it goes down to the catch block far below
+            try{ validateOrder();
+          //<------------------------------------------------------------------------------------------------>
+
+
             // Group the all  products in the trolley including what's out of stock by productId to optimize stock checking
             // Check the database for sufficient stock for all products in the trolley.
             // If any products are insufficient, the update will be rolled back.
@@ -151,6 +178,12 @@ public class CustomerModel {
 
                 trolley.removeAll(insufficientProducts);//this is step 1 that  removes all the insufficient stock from the trolley
                 noStockWarning.showRemovalMsg(errorMsg.toString());
+
+            }
+            } catch (RuntimeException e){
+                // this is the catch block if validateOrder() didnt run when
+                // Minimum spend is less than 5 pounds then the program comes here
+                noStockWarning.showRemovalMsg("Validation Error:\n" + e.getMessage());
 
             }
         }
@@ -209,8 +242,17 @@ public class CustomerModel {
      //Path.toUri(): Converts a Path object (a file or a directory path) to a URI object.
      //File.toURI(): Converts a File object (a file on the filesystem) to a URI object
 
-    //for test only
+    //for test only for organized trolley feature
     public ArrayList<Product> getTrolley() {
         return trolley;
     }
+    //below code is the helper method for the payment feature.
+    private void validateOrder(){
+        for (int i=0; i< activeRules.size(); i++){
+            OrderChecker rule = activeRules.get(i);
+            rule.validate(trolley); //runs the rule
+        }
+    }
 }
+
+
