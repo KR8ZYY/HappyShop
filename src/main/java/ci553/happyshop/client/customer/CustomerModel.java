@@ -206,9 +206,11 @@ public class CustomerModel {
                 Product existing = grouped.get(id);
                 existing.setOrderedQuantity(existing.getOrderedQuantity() + p.getOrderedQuantity());
             } else {
-                // Make a shallow copy to avoid modifying the original
-                grouped.put(id,new Product(p.getProductId(),p.getProductDescription(),
-                        p.getProductImageName(),p.getUnitPrice(),p.getStockQuantity()));
+                Product newP = new Product(p.getProductId(), p.getProductDescription(), p.getProductImageName(),
+                        p.getUnitPrice(), p.getStockQuantity());//creates a copy of the product to use without
+                // messing up the original list.
+                newP.setOrderedQuantity(p.getOrderedQuantity());
+                grouped.put(id, newP);
             }
         }
         return new ArrayList<>(grouped.values());
