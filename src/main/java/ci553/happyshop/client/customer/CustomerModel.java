@@ -22,8 +22,9 @@ import java.util.Map;
  */
 public class CustomerModel {
     public CustomerView cusView;
+    public RemoveProductNotifier noStockWarning;
     public DatabaseRW databaseRW; //Interface type, not specific implementation
-                                  //Benefits: Flexibility: Easily change the database implementation.
+    //Benefits: Flexibility: Easily change the database implementation.
 
     private Product theProduct =null; // product found from search
     private ArrayList<Product> trolley =  new ArrayList<>(); // a list of products in trolley
@@ -147,8 +148,10 @@ public class CustomerModel {
                 // 2. Trigger a message window to notify the customer about the insufficient stock, rather than directly changing displayLaSearchResult.
                 //You can use the provided RemoveProductNotifier class and its showRemovalMsg method for this purpose.
                 //remember close the message window where appropriate (using method closeNotifierWindow() of RemoveProductNotifier class)
-                displayLaSearchResult = "Checkout failed due to insufficient stock for the following products:\n" + errorMsg.toString();
-                System.out.println("stock is not enough");
+
+                trolley.removeAll(insufficientProducts);//this is step 1 that  removes all the insufficient stock from the trolley
+                noStockWarning.showRemovalMsg(errorMsg.toString());
+
             }
         }
         else{
@@ -171,8 +174,11 @@ public class CustomerModel {
                 existing.setOrderedQuantity(existing.getOrderedQuantity() + p.getOrderedQuantity());
             } else {
                 // Make a shallow copy to avoid modifying the original
-                grouped.put(id,new Product(p.getProductId(),p.getProductDescription(),
-                        p.getProductImageName(),p.getUnitPrice(),p.getStockQuantity()));
+                Product newPrd = new Product(p.getProductId(), p.getProductDescription(), p.getProductImageName(),
+                        p.getUnitPrice(), p.getStockQuantity());//creates a copy of the product to use without
+                // messing up the original list.
+                newPrd.setOrderedQuantity(p.getOrderedQuantity());
+                grouped.put(id, newPrd);
             }
         }
         return new ArrayList<>(grouped.values());
@@ -181,6 +187,7 @@ public class CustomerModel {
     void cancel(){
         trolley.clear();
         displayTaTrolley="";
+        noStockWarning.closeNotifierWindow();
         updateView();
     }
     void closeReceipt(){
