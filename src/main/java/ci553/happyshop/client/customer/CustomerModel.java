@@ -1,5 +1,10 @@
 package ci553.happyshop.client.customer;
 
+import ci553.happyshop.catalogue.validation.OrderChecker;
+import ci553.happyshop.catalogue.validation.MaximumQuantRule;
+import ci553.happyshop.catalogue.validation.MinimumSpendingRule;
+import java.util.List;
+
 import ci553.happyshop.catalogue.Order;
 import ci553.happyshop.catalogue.Product;
 import ci553.happyshop.storageAccess.DatabaseRW;
@@ -28,6 +33,21 @@ public class CustomerModel {
 
     private Product theProduct =null; // product found from search
     private ArrayList<Product> trolley =  new ArrayList<>(); // a list of products in trolley
+
+    //<------------------------------------------------------------------------------>
+    //Code in this block is to load rules for the OCP for the complex payment feature
+
+    private List<OrderChecker> activeRules = new ArrayList<>();
+    // this line of code lists the OCP rules
+
+
+    public CustomerModel(){
+        activeRules.add(new MinimumSpendingRule());
+        activeRules.add(new MaximumQuantRule());
+    }
+    //code above here is to load the OCP rules via constructors
+
+    //<----------------------------------------------------------------------------------->
 
     // Four UI elements to be passed to CustomerView for display updates.
     private String imageName = "imageHolder.jpg";                // Image to show in product preview (Search Page)
@@ -110,47 +130,59 @@ public class CustomerModel {
 
     void checkOut() throws IOException, SQLException {
         if(!trolley.isEmpty()){
-            // Group the products in the trolley by productId to optimize stock checking
-            // Check the database for sufficient stock for all products in the trolley.
-            // If any products are insufficient, the update will be rolled back.
-            // If all products are sufficient, the database will be updated, and insufficientProducts will be empty.
-            // Note: If the trolley is already organized (merged and sorted), grouping is unnecessary.
-            ArrayList<Product> groupedTrolley= groupProductsById(trolley);
-            ArrayList<Product> insufficientProducts= databaseRW.purchaseStocks(groupedTrolley);
+            //<------------------------------------------------------------------------------------------------->
+            //Try Catch for validation block and if this fails it goes down to the catch block far below
+            try{ validateOrder();
+                //<------------------------------------------------------------------------------------------------>
 
-            if(insufficientProducts.isEmpty()){ // If stock is sufficient for all products
-                //get OrderHub and tell it to make a new Order
-                OrderHub orderHub =OrderHub.getOrderHub();
-                Order theOrder = orderHub.newOrder(trolley);
-                trolley.clear();
-                displayTaTrolley ="";
-                displayTaReceipt = String.format(
-                        "Order_ID: %s\nOrdered_Date_Time: %s\n%s",
-                        theOrder.getOrderId(),
-                        theOrder.getOrderedDateTime(),
-                        ProductListFormatter.buildString(theOrder.getProductList())
-                );
-                System.out.println(displayTaReceipt);
-            }
-            else{ // Some products have insufficient stock — build an error message to inform the customer
-                StringBuilder errorMsg = new StringBuilder();
-                for(Product p : insufficientProducts){
-                    errorMsg.append("\u2022 "+ p.getProductId()).append(", ")
-                            .append(p.getProductDescription()).append(" (Only ")
-                            .append(p.getStockQuantity()).append(" available, ")
-                            .append(p.getOrderedQuantity()).append(" requested)\n");
+
+                // Group the all  products in the trolley including what's out of stock by productId to optimize stock checking
+                // Check the database for sufficient stock for all products in the trolley.
+                // If any products are insufficient, the update will be rolled back.
+                // If all products are sufficient, the database will be updated, and insufficientProducts will be empty.
+                // Note: If the trolley is already organized (merged and sorted), grouping is unnecessary.
+                ArrayList<Product> groupedTrolley= groupProductsById(trolley);
+                ArrayList<Product> insufficientProducts= databaseRW.purchaseStocks(groupedTrolley);
+
+                if(insufficientProducts.isEmpty()){ // If stock is sufficient for all products
+                    //get OrderHub and tell it to make a new Order
+                    OrderHub orderHub =OrderHub.getOrderHub();
+                    Order theOrder = orderHub.newOrder(trolley);
+                    trolley.clear();
+                    displayTaTrolley ="";
+                    displayTaReceipt = String.format(
+                            "Order_ID: %s\nOrdered_Date_Time: %s\n%s",
+                            theOrder.getOrderId(),
+                            theOrder.getOrderedDateTime(),
+                            ProductListFormatter.buildString(theOrder.getProductList())
+                    );
+                    System.out.println(displayTaReceipt);
                 }
-                theProduct=null;
+                else{ // Some products have insufficient stock — build an error message to inform the customer
+                    StringBuilder errorMsg = new StringBuilder();
+                    for(Product p : insufficientProducts){
+                        errorMsg.append("\u2022 "+ p.getProductId()).append(", ")
+                                .append(p.getProductDescription()).append(" (Only ")
+                                .append(p.getStockQuantity()).append(" available, ")
+                                .append(p.getOrderedQuantity()).append(" requested)\n");
+                    }
+                    theProduct=null;
 
-                //TODO
-                // Add the following logic here:
-                // 1. Remove products with insufficient stock from the trolley.
-                // 2. Trigger a message window to notify the customer about the insufficient stock, rather than directly changing displayLaSearchResult.
-                //You can use the provided RemoveProductNotifier class and its showRemovalMsg method for this purpose.
-                //remember close the message window where appropriate (using method closeNotifierWindow() of RemoveProductNotifier class)
+                    //TODO
+                    // Add the following logic here:
+                    // 1. Remove products with insufficient stock from the trolley.
+                    // 2. Trigger a message window to notify the customer about the insufficient stock, rather than directly changing displayLaSearchResult.
+                    //You can use the provided RemoveProductNotifier class and its showRemovalMsg method for this purpose.
+                    //remember close the message window where appropriate (using method closeNotifierWindow() of RemoveProductNotifier class)
 
-                trolley.removeAll(insufficientProducts);//this is step 1 that  removes all the insufficient stock from the trolley
-                noStockWarning.showRemovalMsg(errorMsg.toString());
+                    trolley.removeAll(insufficientProducts);//this is step 1 that  removes all the insufficient stock from the trolley
+                    noStockWarning.showRemovalMsg(errorMsg.toString());
+
+                }
+            } catch (RuntimeException e){
+                // this is the catch block if validateOrder() didnt run when
+                // Minimum spend is less than 5 pounds then the program comes here
+                noStockWarning.showRemovalMsg("Validation Error:\n" + e.getMessage());
 
             }
         }
@@ -215,5 +247,11 @@ public class CustomerModel {
     //for test only
     public ArrayList<Product> getTrolley() {
         return trolley;
+    }
+    private void validateOrder(){
+        for (int i=0; i< activeRules.size(); i++){
+            OrderChecker rule = activeRules.get(i);
+            rule.validate(trolley); //runs the rule
+        }
     }
 }
