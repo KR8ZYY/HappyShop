@@ -70,7 +70,33 @@ public class CustomerModel {
             //TODO
             // 1. Merges items with the same product ID (combining their quantities).
             // 2. Sorts the products in the trolley by product ID.
-            trolley.add(theProduct);
+
+            //step 1
+            // I start with checking if the product is actually in the trolley and matched
+            // using a flag variable
+            boolean IsProductAlreadyInTrolley = false;
+
+            for (int i=0; i<trolley.size(); i++){
+
+                Product productInTrolley = trolley.get(i);
+                //checks if productID in trolley is the same as the productID thats being looked for
+                if(productInTrolley.getProductId().equals(theProduct.getProductId())){
+                    int TheCurrentQuantity = productInTrolley.getOrderedQuantity();
+                    productInTrolley.setOrderedQuantity(TheCurrentQuantity + 1);
+                    //if product match is found then flag goes to true and loops stops next
+                    IsProductAlreadyInTrolley = true;
+                    break;
+
+                }
+            }
+            //after the loop if the flag is still false then adds item to trolley
+            if(IsProductAlreadyInTrolley == false){
+                trolley.add(theProduct);
+            }
+            //step 2
+            // I use a lambda expression to define a rule to compare the product and productID
+            //product in trolley is prd1 and productID is prd2
+            trolley.sort((prd1,prd2)->prd1.getProductId().compareTo(prd2.getProductId()));
             displayTaTrolley = ProductListFormatter.buildString(trolley); //build a String for trolley so that we can show it
         }
         else{
