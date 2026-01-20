@@ -34,6 +34,18 @@ public class CustomerModel {
     private Product theProduct =null; // product found from search
     private ArrayList<Product> trolley =  new ArrayList<>(); // a list of products in trolley
 
+
+    //<---------------------------------------------------------------------------------------->
+    //code in this block is for testing for the search feature
+    private String testSearchId = null;//holds product id during testing
+
+    public void setTestSearchId(String id) {
+        this.testSearchId = id;
+    }
+    //<-------------------------------------------------------------------------------->
+
+
+
     //<------------------------------------------------------------------------------>
     //Code in this block is to load rules for the OCP for the complex payment feature
 
@@ -57,28 +69,60 @@ public class CustomerModel {
 
     //SELECT productID, description, image, unitPrice,inStock quantity
     void search() throws SQLException {
-        String productId = cusView.tfId.getText().trim();
+        String productId;
+        //checks if its testing or running normally
+        if (testSearchId != null) {
+            productId = testSearchId;
+        } else {
+            productId = cusView.tfId.getText().trim();
+        }
         if(!productId.isEmpty()){
-            theProduct = databaseRW.searchByProductId(productId); //search database
+            theProduct = databaseRW.searchByProductId(productId); //search database by ID
+            if (theProduct == null){
+                ArrayList<Product> results = databaseRW.searchProduct(productId);//this will search by name in the database
+                // by getting the list to find a match even though its labelled as id
+                if(!results.isEmpty()){
+                    if (results.size() == 1) {
+                        theProduct = results.get(0);//this line of code takes the first item from the arraylist that matches the name
+                    } else {
+                        //shows list of multiple items requested by using stringbuilder
+                        StringBuilder newlistBuilder = new StringBuilder("Several products found:\n");
+                        for (int i = 0; i < results.size(); i++) {
+                            Product p = results.get(i);
+                            newlistBuilder.append("\u2022 "+ p.getProductId())
+                                    .append(" - ")
+                                    .append(p.getProductDescription())
+                                    .append("\n");
+                        }
+                        displayLaSearchResult = newlistBuilder.toString();//updates the display string
+                        theProduct = null;
+                        System.out.println("Several products were found");
+                        updateView();
+                        return;
+                    }
+                }else{
+                    //nothing should happen if the list actually ends up empty so it skips forward
+                }
+            }
             if(theProduct != null && theProduct.getStockQuantity()>0){
                 double unitPrice = theProduct.getUnitPrice();
                 String description = theProduct.getProductDescription();
                 int stock = theProduct.getStockQuantity();
 
-                String baseInfo = String.format("Product_Id: %s\n%s,\nPrice: £%.2f", productId, description, unitPrice);
+                String baseInfo = String.format("Product_Id: %s\n%s,\nPrice: £%.2f", theProduct.getProductId(), description, unitPrice);
                 String quantityInfo = stock < 100 ? String.format("\n%d units left.", stock) : "";
                 displayLaSearchResult = baseInfo + quantityInfo;
                 System.out.println(displayLaSearchResult);
             }
             else{
                 theProduct=null;
-                displayLaSearchResult = "No Product was found with ID " + productId;
-                System.out.println("No Product was found with ID " + productId);
+                displayLaSearchResult = "No Product was found with ID or Name " + productId;
+                System.out.println("No Product was found with ID or Name " + productId);
             }
         }else{
             theProduct=null;
-            displayLaSearchResult = "Please type ProductID";
-            System.out.println("Please type ProductID.");
+            displayLaSearchResult = "Please type a ProductID or Name";
+            System.out.println("Please type ProductID or Name here.");
         }
         updateView();
     }
@@ -227,6 +271,11 @@ public class CustomerModel {
     }
 
     void updateView() {
+        //for search feature test
+        if (testSearchId != null)
+        {return;}else{
+            //skip forward
+        }
         if(theProduct != null){
             imageName = theProduct.getProductImageName();
             String relativeImageUrl = StorageLocation.imageFolder +imageName; //relative file path, eg images/0001.jpg
@@ -240,9 +289,9 @@ public class CustomerModel {
         }
         cusView.update(imageName, displayLaSearchResult, displayTaTrolley,displayTaReceipt);
     }
-     // extra notes:
-     //Path.toUri(): Converts a Path object (a file or a directory path) to a URI object.
-     //File.toURI(): Converts a File object (a file on the filesystem) to a URI object
+    // extra notes:
+    //Path.toUri(): Converts a Path object (a file or a directory path) to a URI object.
+    //File.toURI(): Converts a File object (a file on the filesystem) to a URI object
 
     //for test only
     public ArrayList<Product> getTrolley() {
@@ -253,5 +302,9 @@ public class CustomerModel {
             OrderChecker rule = activeRules.get(i);
             rule.validate(trolley); //runs the rule
         }
+    }
+    //getter for search feature junit
+    public String getSearchResult() {
+        return displayLaSearchResult;
     }
 }
