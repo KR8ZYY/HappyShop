@@ -43,7 +43,7 @@ public class EmergencyExit {
         BorderPane borderPane = new BorderPane();
         borderPane.setCenter(btnExit);
 
-        borderPane.setStyle(UIStyle.rootStyle);
+        borderPane.setStyle("-fx-background-color: #ff4d4d;");
         Scene scene = new Scene(borderPane, WIDTH, HEIGHT);
         Stage window = new Stage();
         window.setScene(scene);

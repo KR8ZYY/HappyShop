@@ -2,6 +2,10 @@ package ci553.happyshop.client;
 
 import ci553.happyshop.client.customer.*;
 
+
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
+import javafx.util.Duration;
 import ci553.happyshop.client.emergency.EmergencyExit;
 import ci553.happyshop.client.orderTracker.OrderTracker;
 import ci553.happyshop.client.picker.PickerController;
@@ -15,6 +19,7 @@ import ci553.happyshop.storageAccess.DatabaseRWFactory;
 import javafx.application.Application;
 import javafx.stage.Stage;
 import java.io.IOException;
+import java.nio.file.Paths;
 
 /**
  * The Main JavaFX application class. The Main class is executable directly.
@@ -35,13 +40,25 @@ import java.io.IOException;
 
 public class Main extends Application {
 
+    MediaPlayer mediaPlayer;//for background music
+
     public static void main(String[] args) {
         launch(args); // Launches the JavaFX application and calls the @Override start()
     }
 
+    public void backgroundmusic() {
+        String backgroundAudio = "AERØHEAD - Fragments.mp3";//credit and reference in report
+        Media h = new Media(Paths.get(backgroundAudio).toUri().toString());
+        mediaPlayer = new MediaPlayer(h);
+        mediaPlayer.setOnEndOfMedia(() -> mediaPlayer.seek(Duration.ZERO));//loops music when it ends
+        mediaPlayer.play();
+    }
+
+
     //starts the system
     @Override
     public void start(Stage window) throws IOException {
+        backgroundmusic();
         startCustomerClient();
         startPickerClient();
         startOrderTracker();

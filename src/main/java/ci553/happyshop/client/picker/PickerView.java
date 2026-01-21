@@ -62,7 +62,7 @@ public class PickerView  {
 
     private VBox createOrderMapRoot() {
         Label laOrderMapRootTitle = new Label("Orders Waiting for Processing");
-        laOrderMapRootTitle.setStyle(UIStyle.labelTitleStyle);
+        laOrderMapRootTitle.setStyle("-fx-text-fill: #ffd700; -fx-font-weight: bold; -fx-font-size: 15px;");
 
         taOrderMap.setEditable(false);
         taOrderMap.setPrefSize(WIDTH, HEIGHT - 100);
@@ -74,14 +74,14 @@ public class PickerView  {
 
         VBox vbOrdersListRoot = new VBox(15, laOrderMapRootTitle, taOrderMap, btnProgressing);
         vbOrdersListRoot.setAlignment(Pos.TOP_CENTER);
-        vbOrdersListRoot.setStyle(UIStyle.rootStyleYellow);
+        vbOrdersListRoot.setStyle("-fx-background-color: #a6a6a6; -fx-padding: 15;");
 
         return vbOrdersListRoot;
     }
 
     private VBox createOrderDetailRoot() {
         laDetailRootTitle = new Label("Progressing Order Details");
-        laDetailRootTitle.setStyle(UIStyle.labelTitleStyle);
+        laDetailRootTitle.setStyle("-fx-text-fill: #ffd700; -fx-font-weight: bold; -fx-font-size: 15px;");
 
         taOrderDetail.setEditable(false);
         taOrderDetail.setPrefSize(WIDTH, HEIGHT - 100);

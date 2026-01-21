@@ -58,14 +58,14 @@ public class CustomerView  {
         // Create a divider line
         Line line = new Line(0, 0, 0, HEIGHT);
         line.setStrokeWidth(4);
-        line.setStroke(Color.PINK);
+        line.setStroke(Color.WHITE);
         VBox lineContainer = new VBox(line);
         lineContainer.setPrefWidth(4); // Give it some space
         lineContainer.setAlignment(Pos.CENTER);
 
         hbRoot = new HBox(10, vbSearchPage, lineContainer, vbTrolleyPage); //initialize to show trolleyPage
         hbRoot.setAlignment(Pos.CENTER);
-        hbRoot.setStyle(UIStyle.rootStyle);
+        hbRoot.setStyle("-fx-background-color: #1a1a1a; -fx-text-fill: white;");
 
         Scene scene = new Scene(hbRoot, WIDTH, HEIGHT);
         window.setScene(scene);
@@ -77,19 +77,19 @@ public class CustomerView  {
 
     private VBox createSearchPage() {
         Label laPageTitle = new Label("Search by Product ID/Name");
-        laPageTitle.setStyle(UIStyle.labelTitleStyle);
+        laPageTitle.setStyle("-fx-text-fill: #ffd700; -fx-font-weight: bold; -fx-font-size: 15px;");
 
         Label laId = new Label("ID:      ");
-        laId.setStyle(UIStyle.labelStyle);
+        laId.setStyle("-fx-text-fill: white; -fx-font-weight: bold;");
         tfId = new TextField();
         tfId.setPromptText("eg. 0001");
         tfId.setStyle(UIStyle.textFiledStyle);
         HBox hbId = new HBox(10, laId, tfId);
 
         Label laName = new Label("Name:");
-        laName.setStyle(UIStyle.labelStyle);
+        laName.setStyle("-fx-text-fill: white; -fx-font-weight: bold;");
         tfName = new TextField();
-        tfName.setPromptText("implement it if you want");
+        tfName.setPromptText("Use top box for search");
         tfName.setStyle(UIStyle.textFiledStyle);
         HBox hbName = new HBox(10, laName, tfName);
 
@@ -111,7 +111,8 @@ public class CustomerView  {
         lbProductInfo = new Label("Thank you for shopping with us.");
         lbProductInfo.setWrapText(true);
         lbProductInfo.setMinHeight(Label.USE_PREF_SIZE);  // Allow auto-resize
-        lbProductInfo.setStyle(UIStyle.labelMulLineStyle);
+        lbProductInfo.setStyle("-fx-background-color: #ffff99;" +
+                " -fx-text-fill: black; -fx-padding: 10px; -fx-border-color: grey; -fx-background-radius: 5;");
         HBox hbSearchResult = new HBox(5, ivProduct, lbProductInfo);
         hbSearchResult.setAlignment(Pos.CENTER_LEFT);
 
@@ -125,7 +126,7 @@ public class CustomerView  {
 
     private VBox CreateTrolleyPage() {
         Label laPageTitle = new Label("🛒🛒  Trolley 🛒🛒");
-        laPageTitle.setStyle(UIStyle.labelTitleStyle);
+        laPageTitle.setStyle("-fx-text-fill: #ffd700; -fx-font-weight: bold; -fx-font-size: 15px;");
 
         taTrolley = new TextArea();
         taTrolley.setEditable(false);
@@ -213,6 +214,6 @@ public class CustomerView  {
 
     WindowBounds getWindowBounds() {
         return new WindowBounds(viewWindow.getX(), viewWindow.getY(),
-                  viewWindow.getWidth(), viewWindow.getHeight());
+                viewWindow.getWidth(), viewWindow.getHeight());
     }
 }

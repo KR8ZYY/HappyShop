@@ -31,7 +31,7 @@ public class OrderTracker {
      //Constructor initializes the UI, a title Label, and a TextArea for displaying the order details.
     public OrderTracker() {
         Label laTitle = new Label("Order_ID,  State");
-        laTitle.setStyle(UIStyle.labelTitleStyle);
+        laTitle.setStyle("-fx-text-fill: #ffd700; -fx-font-weight: bold; -fx-font-size: 15px;");
 
         taDisplay = new TextArea();
         taDisplay.setEditable(false);

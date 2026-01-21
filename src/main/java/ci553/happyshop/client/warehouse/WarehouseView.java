@@ -137,14 +137,14 @@ public class WarehouseView  {
         // Divider line between SearchPage and ProductFormPage
         Line line = new Line(0, 0, 0, HEIGHT);
         line.setStrokeWidth(4);
-        line.setStroke(Color.LIGHTGREEN);
+        line.setStroke(Color.WHITE);
         VBox lineContainer = new VBox(line);
         lineContainer.setPrefWidth(4);
         lineContainer.setAlignment(Pos.CENTER);
 
         //top level layout manager
         HBox hbRoot = new HBox(15, vbSearchPage, lineContainer, vbProductFormPage);
-        hbRoot.setStyle(UIStyle.rootStyleWarehouse);
+        hbRoot.setStyle("-fx-background-color: #595959; -fx-text-fill: white;");
 
         Scene scene = new Scene(hbRoot, WIDTH, HEIGHT);
         window.setScene(scene);
@@ -157,7 +157,7 @@ public class WarehouseView  {
 
     private VBox createSearchPage() {
         Label laTitle = new Label("Search by product ID/Name");
-        laTitle.setStyle(UIStyle.labelTitleStyle);
+        laTitle.setStyle("-fx-text-fill: #ffd700; -fx-font-weight: bold; -fx-font-size: 15px;");
 
         tfSearchKeyword = new TextField();
         tfSearchKeyword.setStyle(UIStyle.textFiledStyle);
@@ -178,7 +178,7 @@ public class WarehouseView  {
         hbSearch.setAlignment(Pos.CENTER);
 
         laSearchSummary = new Label("Search Summary");
-        laSearchSummary.setStyle(UIStyle.labelStyle);
+        laSearchSummary.setStyle("-fx-text-fill: white; -fx-font-weight: bold;");
         Button btnEdit = new Button("Edit");
         btnEdit.setStyle(UIStyle.greenFillBtnStyle);
         btnEdit.setOnAction(this::buttonClick);
@@ -289,7 +289,7 @@ public class WarehouseView  {
     private VBox createEditProdcutChild() {
         //HBox for Id Label and TextField
         Label laId = new Label("ID"+" ".repeat(8));
-        laId.setStyle(UIStyle.labelStyle);
+        laId.setStyle("-fx-text-fill: black; -fx-font-weight: bold;");
         tfIdEdit = new TextField();
         tfIdEdit.setEditable(false);
         tfIdEdit.setStyle("-fx-font-size: 14px; -fx-pref-width: 100px;");
@@ -298,7 +298,7 @@ public class WarehouseView  {
 
         // HBox for Price Label and TextField
         Label laPrice = new Label("Price_£");
-        laPrice.setStyle(UIStyle.labelStyle);
+        laPrice.setStyle("-fx-text-fill: black; -fx-font-weight: bold;");
         tfPriceEdit = new TextField();
         tfPriceEdit.setStyle("-fx-font-size: 14px; -fx-pref-width: 100px;");
         HBox hbPrice = new HBox(10, laPrice, tfPriceEdit);
@@ -323,7 +323,7 @@ public class WarehouseView  {
 
         // Editing stock
         Label laStock = new Label("Stock"+" ".repeat(3));
-        laStock.setStyle(UIStyle.labelStyle);
+        laStock.setStyle("-fx-text-fill: black; -fx-font-weight: bold;");
 
         // TextField current stock
         tfStockEdit = new TextField();
@@ -352,7 +352,7 @@ public class WarehouseView  {
 
         // VBox for Description label and TextArea
         Label laDes = new Label("Description:");
-        laDes.setStyle(UIStyle.labelStyle);
+        laDes.setStyle("-fx-text-fill: black; -fx-font-weight: bold;");
         taDescriptionEdit = new TextArea();
         taDescriptionEdit.setPrefSize(COLUMN_WIDTH-20, 20);
         taDescriptionEdit.setWrapText(true);
@@ -386,7 +386,7 @@ public class WarehouseView  {
     private VBox createNewProductChild() {
         //HBox for Id Label and TextField
         Label laId = new Label("ID"+ " ".repeat(9));
-        laId.setStyle(UIStyle.labelStyle);
+        laId.setStyle("-fx-text-fill: black; -fx-font-weight: bold;");
         tfIdNewPro = new TextField();
         tfIdNewPro.setStyle("-fx-font-size: 14px; -fx-pref-width: 100px;");
         HBox hbId = new HBox(10, laId, tfIdNewPro);
@@ -394,7 +394,7 @@ public class WarehouseView  {
 
         // HBox for Price Label and TextField
         Label laPrice = new Label("Price_£ ");
-        laPrice.setStyle(UIStyle.labelStyle);
+        laPrice.setStyle("-fx-text-fill: black; -fx-font-weight: bold;");
         tfPriceNewPro = new TextField();
         tfPriceNewPro.setStyle("-fx-font-size: 14px; -fx-pref-width: 100px;");
         HBox hbPrice = new HBox(10, laPrice, tfPriceNewPro);
@@ -402,7 +402,7 @@ public class WarehouseView  {
 
         //  HBox for stock label and textFiled
         Label laStock = new Label("Stock" +" ".repeat(4));
-        laStock.setStyle(UIStyle.labelStyle);
+        laStock.setStyle("-fx-text-fill: black; -fx-font-weight: bold;");
         tfStockNewPro = new TextField();
         tfStockNewPro.setStyle("-fx-font-size: 14px; -fx-pref-width: 100px;");
         HBox hbStock = new HBox(10, laStock, tfStockNewPro);
@@ -426,7 +426,7 @@ public class WarehouseView  {
 
         // VBox for Description label and TextArea
         Label laDes = new Label("Description:");
-        laDes.setStyle(UIStyle.labelStyle);
+        laDes.setStyle("-fx-text-fill: black; -fx-font-weight: bold;");
         taDescriptionNewPro = new TextArea();
         taDescriptionNewPro.setPrefSize(COLUMN_WIDTH-20, 20);
         taDescriptionNewPro.setWrapText(true);
@@ -451,7 +451,7 @@ public class WarehouseView  {
 
         // Main Layout
         VBox vbAddNewProductToStockChild = new VBox(10, hbIdPriceStockImage, vbDescription, hbOkCancelBtns);
-        vbAddNewProductToStockChild.setStyle(UIStyle.manageStockChildStyle1);
+        vbAddNewProductToStockChild.setStyle(UIStyle.manageStockChildStyle);
         return vbAddNewProductToStockChild;
     }
 
@@ -491,7 +491,7 @@ public class WarehouseView  {
         FileChooser fileChooser = new FileChooser();
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Images", "*.png", "*.jpg", "*.jpeg"));
         File file = fileChooser.showOpenDialog(null); //return absolute fullpath of the user selected file
-                                                              //eg C:/Users/John/Pictures/sample.jpg
+        //eg C:/Users/John/Pictures/sample.jpg
         if (file != null) {
 
             if (theProFormMode.equals("EDIT")) {
@@ -556,20 +556,20 @@ public class WarehouseView  {
     }
 
     void resetNewProChild() {
-       tfIdNewPro.setText("");
-       tfPriceNewPro.setText("");
-       tfStockNewPro.setText("");
-       taDescriptionNewPro.setText("");
-       ivProNewPro.setImage(new Image("WarehouseImageHolder.jpg"));
-       imageUriNewPro = null; //clear the selcted image
-       System.out.println("resetNewProChild in view called");
+        tfIdNewPro.setText("");
+        tfPriceNewPro.setText("");
+        tfStockNewPro.setText("");
+        taDescriptionNewPro.setText("");
+        ivProNewPro.setImage(new Image("WarehouseImageHolder.jpg"));
+        imageUriNewPro = null; //clear the selcted image
+        System.out.println("resetNewProChild in view called");
     }
 
     WindowBounds getWindowBounds() {
         return new WindowBounds(viewWindow.getX(),
-                                viewWindow.getY(),
-                                viewWindow.getWidth(),
-                                viewWindow.getHeight());
+                viewWindow.getY(),
+                viewWindow.getWidth(),
+                viewWindow.getHeight());
     }
 
     //   //another way to reset the editChild and NewProChild
