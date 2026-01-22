@@ -21,9 +21,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * TODO
- * You can either directly modify the CustomerModel class to implement the required tasks,
- * or create a subclass of CustomerModel and override specific methods where appropriate.
+ * @author Kalif Hameed Sally University of Brighton
+ * @version 1.0
+ * This class handles all the logic for majority of the implemented features such as
+ * Organised trolley, Stock shortage and checkout, Pay feature with exceptions, and
+ * the unified search feature were done here.
  */
 public class CustomerModel {
     public CustomerView cusView;

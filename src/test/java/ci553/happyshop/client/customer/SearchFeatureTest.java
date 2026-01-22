@@ -6,6 +6,12 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 import java.sql.SQLException;
 
+/**
+ * @author Kalif Hameed Sally University of Brighton
+ * @version 1.0
+ * This file is the JUnit test for the unified search feature and checks name or ID.
+ */
+
 class SearchFeatureTest{
 
     @Test
