@@ -96,11 +96,13 @@ public class Main extends Application {
         cusController.cusModel = cusModel;
         cusModel.cusView = cusView;
         cusModel.databaseRW = databaseRW;
-        cusView.start(new Stage());
 
-        //RemoveProductNotifier removeProductNotifier = new RemoveProductNotifier();
-        //removeProductNotifier.cusView = cusView;
-        //cusModel.removeProductNotifier = removeProductNotifier;
+        //fixes my error since stock and pay feature did not run when using main
+        //created the notifier and attached it to the customermodel
+        RemoveProductNotifier removeProductNotifier = new RemoveProductNotifier();
+        removeProductNotifier.cusView = cusView;
+        cusModel.noStockWarning = removeProductNotifier;
+        cusView.start(new Stage());
     }
 
     /** The picker GUI, - for staff to pack customer's order,

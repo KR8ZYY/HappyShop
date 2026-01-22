@@ -30,16 +30,16 @@ public class CustomerClient extends Application {
         CustomerController cusController = new CustomerController();
         CustomerModel cusModel = new CustomerModel();
         DatabaseRW databaseRW = DatabaseRWFactory.createDatabaseRW();
-        RemoveProductNotifier noStockWarning = new RemoveProductNotifier();//step 2 of second todotask in model
-
+        //removed duplicate nostockwarning
         cusView.cusController = cusController;
         cusController.cusModel = cusModel;
         cusModel.cusView = cusView;
         cusModel.databaseRW = databaseRW;
-        cusView.start(window);
-
         RemoveProductNotifier removeProductNotifier = new RemoveProductNotifier();
         removeProductNotifier.cusView = cusView;
-        cusModel.noStockWarning = removeProductNotifier;
+        cusModel.noStockWarning = removeProductNotifier;//fixed nullpointer exception when trying to get some features to work
+
+        //starts the window at the end after everything else
+        cusView.start(window);
     }
 }

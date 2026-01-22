@@ -153,7 +153,7 @@ public class CustomerView  {
 
     private VBox createReceiptPage() {
         Label laPageTitle = new Label("Receipt");
-        laPageTitle.setStyle(UIStyle.labelTitleStyle);
+        laPageTitle.setStyle("-fx-text-fill: #ffd700; -fx-font-weight: bold; -fx-font-size: 15px;");
 
         taReceipt = new TextArea();
         taReceipt.setEditable(false);
@@ -167,7 +167,7 @@ public class CustomerView  {
         vbReceiptPage = new VBox(15, laPageTitle, taReceipt, btnCloseReceipt);
         vbReceiptPage.setPrefWidth(COLUMN_WIDTH);
         vbReceiptPage.setAlignment(Pos.TOP_CENTER);
-        vbReceiptPage.setStyle(UIStyle.rootStyleYellow);
+        vbReceiptPage.setStyle("-fx-padding: 15px;");
         return vbReceiptPage;
     }
 
